@@ -128,7 +128,7 @@
                 {
                     break;
                 }
-                lastAverageValidationLoss = averageTrainingLoss;
+                lastAverageValidationLoss = averageValidationLoss;
             }
             Console.WriteLine($"End of training : overfitting threshold reached.");
         }
