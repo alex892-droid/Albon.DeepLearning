@@ -16,6 +16,8 @@
 
         private Func<double[], double[], double> LossFunction { get; set; }
 
+        private double LearningRate { get; set; }
+
         public NeuralNetwork(
             double[][] trainingDataset,
             double[][] expectedResultsDataset,
@@ -23,7 +25,8 @@
             int numberOfNeuronsPerLayer,
             Func<double, double> activationFunctionNeurons,
             Func<double, double> activationFunctionOutputs,
-            Func<double[], double[], double> lossFunction
+            Func<double[], double[], double> lossFunction,
+            double learningRate
             )
         {
             Layers = new Layer[numberOfHiddenLayers + 1];
@@ -43,6 +46,7 @@
             TrainingDataset = trainingDataset;
             ExpectedResultsDataset = expectedResultsDataset;
             LossFunction = lossFunction;
+            LearningRate = learningRate;
         }
 
         public double Test(double[] inputs, double[] expectedOutputs)
@@ -61,7 +65,7 @@
             return Layers[^1];
         }
 
-        public double TrainOnData(double[] inputs, double[] expectedOutputs, double learningRate)
+        public double TrainOnData(double[] inputs, double[] expectedOutputs)
         {
             double[][][] weights = GetWeights();
             for (int i = 0; i < Layers.Length; i++)
@@ -71,17 +75,17 @@
                     int weightIndex = 0;
                     foreach (var weight in weights[i][j]) //Variable
                     {
-                        weights[i][j][weightIndex] += learningRate;
+                        weights[i][j][weightIndex] += LearningRate;
                         ModifyWeights(weights);
                         double error = GetError(inputs, expectedOutputs);
 
-                        weights[i][j][weightIndex] -= 2 * learningRate;
+                        weights[i][j][weightIndex] -= 2 * LearningRate;
                         ModifyWeights(weights);
                         double error2 = GetError(inputs, expectedOutputs);
 
-                        var gradient = (error - error2) / (2 * learningRate);
+                        var gradient = (error - error2) / (2 * LearningRate);
 
-                        weights[i][j][weightIndex] += learningRate - learningRate * gradient;
+                        weights[i][j][weightIndex] += LearningRate - LearningRate * gradient;
                         ModifyWeights(weights);
                         weightIndex++;
                     }
@@ -107,7 +111,7 @@
                 int k = 0;
                 foreach (var data in trainingDataset)
                 {
-                    averageTrainingLoss += TrainOnData(data, trainingExpectedResultsDataset[k++], 100);
+                    averageTrainingLoss += TrainOnData(data, trainingExpectedResultsDataset[k++]);
                 }
                 averageTrainingLoss /= trainingDataset.Length;
 
