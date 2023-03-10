@@ -126,11 +126,24 @@
 
                 if(lastAverageValidationLoss < averageValidationLoss)
                 {
+                    Console.WriteLine($"End of training : overfitting threshold reached.");
                     break;
                 }
+
+                if (lastAverageValidationLoss == averageValidationLoss)
+                {
+                    Console.WriteLine($"End of training : learning ineffective. Increase number of neurons or increase learning rate.");
+                    break;
+                }
+
+                if (averageValidationLoss == double.NaN)
+                {
+                    Console.WriteLine($"End of training : Error too high to be calculated. Adjust parameters.");
+                    break;
+                }
+
                 lastAverageValidationLoss = averageValidationLoss;
             }
-            Console.WriteLine($"End of training : overfitting threshold reached.");
         }
 
         public double GetError(double[] inputs, double[] expectedOutputs)
