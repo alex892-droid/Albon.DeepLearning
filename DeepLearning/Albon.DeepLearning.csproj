@@ -18,6 +18,8 @@
     <PackAsTool>False</PackAsTool>
     <NeutralLanguage>en</NeutralLanguage>
     <RunAnalyzersDuringBuild>False</RunAnalyzersDuringBuild>
+    <Version>1.0.1</Version>
+    <AssemblyName>Albon.DeepLearning</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
