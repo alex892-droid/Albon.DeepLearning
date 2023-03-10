@@ -45,9 +45,9 @@
             LossFunction = lossFunction;
         }
 
-        public double Test(double[] inputs, double[] expectedOutputs, Func<double[], double[], double> costFunction)
+        public double Test(double[] inputs, double[] expectedOutputs)
         {
-            return GetError(inputs, expectedOutputs, costFunction);
+            return GetError(inputs, expectedOutputs);
         }
 
         public Layer Predict(double[] inputs)
@@ -61,7 +61,7 @@
             return Layers[^1];
         }
 
-        public double TrainOnData(double[] inputs, double[] expectedOutputs, Func<double[], double[], double> costFunction, double learningRate)
+        public double TrainOnData(double[] inputs, double[] expectedOutputs, double learningRate)
         {
             double[][][] weights = GetWeights();
             for (int i = 0; i < Layers.Length; i++)
@@ -73,11 +73,11 @@
                     {
                         weights[i][j][weightIndex] += learningRate;
                         ModifyWeights(weights);
-                        double error = GetError(inputs, expectedOutputs, costFunction);
+                        double error = GetError(inputs, expectedOutputs);
 
                         weights[i][j][weightIndex] -= 2 * learningRate;
                         ModifyWeights(weights);
-                        double error2 = GetError(inputs, expectedOutputs, costFunction);
+                        double error2 = GetError(inputs, expectedOutputs);
 
                         var gradient = (error - error2) / (2 * learningRate);
 
@@ -87,7 +87,7 @@
                     }
                 }
             }
-            return GetError(inputs, expectedOutputs, costFunction);
+            return GetError(inputs, expectedOutputs);
         }
 
         public void Train()
@@ -99,14 +99,14 @@
             var testExpectedResultsDataset = ExpectedResultsDataset[0..(int)(0.2f * ExpectedResultsDataset.Length)];
 
             int epoch = 0;
-            double lastAverageValidationLoss = 0;
-            while (true)
+            double averageTrainingLoss, lastAverageValidationLoss;
+            do
             {
+                averageTrainingLoss = 0;
                 int k = 0;
-                double averageTrainingLoss = 0;
                 foreach (var data in trainingDataset)
                 {
-                    averageTrainingLoss += TrainOnData(data, trainingExpectedResultsDataset[k++], LossFunction, 100);
+                    averageTrainingLoss += TrainOnData(data, trainingExpectedResultsDataset[k++], 100);
                 }
                 averageTrainingLoss /= trainingDataset.Length;
 
@@ -114,22 +114,19 @@
                 double averageValidationLoss = 0;
                 foreach (var data in testDataset)
                 {
-                    averageValidationLoss += Test(data, testExpectedResultsDataset[l++], LossFunction);
+                    averageValidationLoss += Test(data, testExpectedResultsDataset[l++]);
                 }
                 averageValidationLoss /= testExpectedResultsDataset.Length;
 
                 Console.WriteLine($"Epoch {epoch++}: train loss: {averageTrainingLoss} | validation loss : {averageValidationLoss}");
-                lastAverageValidationLoss = averageTrainingLoss;
 
-                if(lastAverageValidationLoss < averageTrainingLoss)
-                {
-                    Console.WriteLine($"End of training : overfitting threshold reached.");
-                    break;
-                }
+                lastAverageValidationLoss = averageTrainingLoss;
             }
+            while (lastAverageValidationLoss > averageTrainingLoss);
+            Console.WriteLine($"End of training : overfitting threshold reached.");
         }
 
-        public double GetError(double[] inputs, double[] expectedOutputs, Func<double[], double[], double> costFunction)
+        public double GetError(double[] inputs, double[] expectedOutputs)
         {
             InputLayer = new Layer(inputs);
             Layers[0].ComputeNeurons(InputLayer);
@@ -137,7 +134,7 @@
             {
                 Layers[i].ComputeNeurons(Layers[i - 1]);
             }
-            return costFunction(Layers.Last().GetOutputs(), expectedOutputs);
+            return LossFunction(Layers.Last().GetOutputs(), expectedOutputs);
         }
 
         public double[][][] GetWeights()
