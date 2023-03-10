@@ -103,11 +103,10 @@
             var testExpectedResultsDataset = ExpectedResultsDataset[0..(int)(0.2f * ExpectedResultsDataset.Length)];
 
             int epoch = 0;
-            double averageTrainingLoss;
             double lastAverageValidationLoss = double.MaxValue;
             while (true)
             {
-                averageTrainingLoss = 0;
+                double averageTrainingLoss = 0;
                 int k = 0;
                 foreach (var data in trainingDataset)
                 {
@@ -125,7 +124,7 @@
 
                 Console.WriteLine($"Epoch {epoch++}: train loss: {averageTrainingLoss} | validation loss : {averageValidationLoss}");
 
-                if(lastAverageValidationLoss < averageTrainingLoss)
+                if(lastAverageValidationLoss < averageValidationLoss)
                 {
                     break;
                 }
