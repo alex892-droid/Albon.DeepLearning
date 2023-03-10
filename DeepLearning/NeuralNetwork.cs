@@ -132,13 +132,13 @@
 
                 if (lastAverageValidationLoss == averageValidationLoss)
                 {
-                    Console.WriteLine($"End of training : learning ineffective. Increase number of neurons or increase learning rate.");
+                    Console.WriteLine($"End of training : learning ineffective. Increase number of neurons/layers or increase learning rate.");
                     break;
                 }
 
                 if (averageValidationLoss == double.NaN)
                 {
-                    Console.WriteLine($"End of training : Error too high to be calculated. Adjust parameters.");
+                    Console.WriteLine($"End of training : Error too high to be calculated. Number of neurons or learning rate too high, or activation/loss function inadequate.");
                     break;
                 }
 
