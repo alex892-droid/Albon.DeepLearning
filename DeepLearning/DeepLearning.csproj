@@ -4,6 +4,27 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageId>Albon.DeepLearning</PackageId>
+    <Title>Neural Network convenient implementation on .Net Framework</Title>
+    <Authors>Alexis Bonneau</Authors>
+    <Description>Neural Network convenient implementation in C#</Description>
+    <PackageProjectUrl>https://github.com/alex892-droid/Albon-DeepLearning</PackageProjectUrl>
+    <Copyright>MIT license</Copyright>
+    <PackageIcon>AlbonDeepLearning.png</PackageIcon>
+    <RepositoryUrl>https://github.com/alex892-droid/Albon-DeepLearning</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>deep, learning, neural, network, neuron</PackageTags>
+    <PackAsTool>False</PackAsTool>
+    <NeutralLanguage>en</NeutralLanguage>
+    <RunAnalyzersDuringBuild>False</RunAnalyzersDuringBuild>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\AlbonDeepLearning.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
 </Project>

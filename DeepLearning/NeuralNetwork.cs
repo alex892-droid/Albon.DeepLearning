@@ -10,12 +10,26 @@
 
         private int NumberOfNeuronsPerLayer { get; set; }
 
-        public NeuralNetwork(int numberOfInputs, int numberOfOutputs, int numberOfHiddenLayers, int numberOfNeuronsPerLayer, Func<double, double> activationFunctionNeurons, Func<double, double> activationFunctionOutputs)
+        private double[][] TrainingDataset { get; set; }
+
+        private double[][] ExpectedResultsDataset { get; set; }
+
+        private Func<double[], double[], double> LossFunction { get; set; }
+
+        public NeuralNetwork(
+            double[][] trainingDataset,
+            double[][] expectedResultsDataset,
+            int numberOfHiddenLayers,
+            int numberOfNeuronsPerLayer,
+            Func<double, double> activationFunctionNeurons,
+            Func<double, double> activationFunctionOutputs,
+            Func<double[], double[], double> lossFunction
+            )
         {
             Layers = new Layer[numberOfHiddenLayers + 1];
 
             //Initialization first hidden layer from number of inputs
-            Layers[0] = new Layer(numberOfNeuronsPerLayer, numberOfInputs, activationFunctionNeurons);
+            Layers[0] = new Layer(numberOfNeuronsPerLayer, trainingDataset[0].Length, activationFunctionNeurons);
 
             for (int i = 1; i < numberOfHiddenLayers; i++)
             {
@@ -23,9 +37,12 @@
             }
 
             //Initialization output layer
-            Layers[numberOfHiddenLayers] = new Layer(numberOfOutputs, numberOfNeuronsPerLayer + NUMBER_OF_BIASES_PER_LAYER, activationFunctionOutputs);
+            Layers[numberOfHiddenLayers] = new Layer(expectedResultsDataset[0].Length, numberOfNeuronsPerLayer + NUMBER_OF_BIASES_PER_LAYER, activationFunctionOutputs);
 
             NumberOfNeuronsPerLayer = numberOfHiddenLayers;
+            TrainingDataset = trainingDataset;
+            ExpectedResultsDataset = expectedResultsDataset;
+            LossFunction = lossFunction;
         }
 
         public double Test(double[] inputs, double[] expectedOutputs, Func<double[], double[], double> costFunction)
@@ -44,7 +61,7 @@
             return Layers[^1];
         }
 
-        public double Train(double[] inputs, double[] expectedOutputs, Func<double[], double[], double> costFunction, double learningRate)
+        public double TrainOnData(double[] inputs, double[] expectedOutputs, Func<double[], double[], double> costFunction, double learningRate)
         {
             double[][][] weights = GetWeights();
             for (int i = 0; i < Layers.Length; i++)
@@ -70,8 +87,46 @@
                     }
                 }
             }
-
             return GetError(inputs, expectedOutputs, costFunction);
+        }
+
+        public void Train()
+        {
+            var trainingDataset = TrainingDataset[0..(int)(0.8f * TrainingDataset.Length)];
+            var trainingExpectedResultsDataset = ExpectedResultsDataset[0..(int)(0.8f * ExpectedResultsDataset.Length)];
+
+            var testDataset = TrainingDataset[0..(int)(0.2f * TrainingDataset.Length)];
+            var testExpectedResultsDataset = ExpectedResultsDataset[0..(int)(0.2f * ExpectedResultsDataset.Length)];
+
+            int epoch = 0;
+            double lastAverageValidationLoss = 0;
+            while (true)
+            {
+                int k = 0;
+                double averageTrainingLoss = 0;
+                foreach (var data in trainingDataset)
+                {
+                    averageTrainingLoss += TrainOnData(data, trainingExpectedResultsDataset[k++], LossFunction, 100);
+                }
+                averageTrainingLoss /= trainingDataset.Length;
+
+                int l = 0;
+                double averageValidationLoss = 0;
+                foreach (var data in testDataset)
+                {
+                    averageValidationLoss += Test(data, testExpectedResultsDataset[l++], LossFunction);
+                }
+                averageValidationLoss /= testExpectedResultsDataset.Length;
+
+                Console.WriteLine($"Epoch {epoch++}: train loss: {averageTrainingLoss} | validation loss : {averageValidationLoss}");
+                lastAverageValidationLoss = averageTrainingLoss;
+
+                if(lastAverageValidationLoss < averageTrainingLoss)
+                {
+                    Console.WriteLine($"End of training : overfitting threshold reached.");
+                    break;
+                }
+            }
         }
 
         public double GetError(double[] inputs, double[] expectedOutputs, Func<double[], double[], double> costFunction)
