@@ -1,13 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DeepLearning
+﻿namespace DeepLearning
 {
     public class NeuralNetwork
     {
@@ -19,7 +10,7 @@ namespace DeepLearning
 
         private int NumberOfNeuronsPerLayer { get; set; }
 
-        public NeuralNetwork(int numberOfInputs, int numberOfOutputs, int numberOfHiddenLayers, int numberOfNeuronsPerLayer, Func<double, double> activationFunctionNeurons, Func<double, double> activationFunctionOutputs) 
+        public NeuralNetwork(int numberOfInputs, int numberOfOutputs, int numberOfHiddenLayers, int numberOfNeuronsPerLayer, Func<double, double> activationFunctionNeurons, Func<double, double> activationFunctionOutputs)
         {
             Layers = new Layer[numberOfHiddenLayers + 1];
 
@@ -48,7 +39,7 @@ namespace DeepLearning
             Layers[0].ComputeNeurons(InputLayer);
             for (int i = 1; i < Layers.Length; i++)
             {
-                Layers[i].ComputeNeurons(Layers[i-1]);
+                Layers[i].ComputeNeurons(Layers[i - 1]);
             }
             return Layers[^1];
         }
@@ -56,12 +47,12 @@ namespace DeepLearning
         public double Train(double[] inputs, double[] expectedOutputs, Func<double[], double[], double> costFunction, double learningRate)
         {
             double[][][] weights = GetWeights();
-            for(int i = 0; i < Layers.Length; i++)
+            for (int i = 0; i < Layers.Length; i++)
             {
-                for(int j = 0; j < NumberOfNeuronsPerLayer; j++)
+                for (int j = 0; j < NumberOfNeuronsPerLayer; j++)
                 {
                     int weightIndex = 0;
-                    foreach(var weight in weights[i][j]) //Variable
+                    foreach (var weight in weights[i][j]) //Variable
                     {
                         weights[i][j][weightIndex] += learningRate;
                         ModifyWeights(weights);
