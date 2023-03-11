@@ -10,7 +10,7 @@
     <Authors>Alexis Bonneau</Authors>
     <Description>Neural Network convenient implementation in C#</Description>
     <PackageProjectUrl>https://github.com/alex892-droid/Albon-DeepLearning</PackageProjectUrl>
-    <Copyright>MIT license</Copyright>
+    <Copyright></Copyright>
     <PackageIcon>AlbonDeepLearning.png</PackageIcon>
     <RepositoryUrl>https://github.com/alex892-droid/Albon-DeepLearning</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
@@ -18,8 +18,9 @@
     <PackAsTool>False</PackAsTool>
     <NeutralLanguage>en</NeutralLanguage>
     <RunAnalyzersDuringBuild>False</RunAnalyzersDuringBuild>
-    <Version>1.0.0.2</Version>
+    <Version>1.0.0.0</Version>
     <AssemblyName>Albon.DeepLearning</AssemblyName>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>

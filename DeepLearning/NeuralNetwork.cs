@@ -68,26 +68,28 @@
         public double TrainOnData(double[] inputs, double[] expectedOutputs)
         {
             double[][][] weights = GetWeights();
-            for (int i = 0; i < Layers.Length; i++)
+            for (int layerIndex = 0; layerIndex < Layers.Length; layerIndex++)
             {
-                for (int j = 0; j < NumberOfNeuronsPerLayer; j++)
+                for (int neuronIndex = 0; neuronIndex < Layers[layerIndex].Neurons.Length; neuronIndex++)
                 {
-                    int weightIndex = 0;
-                    foreach (var weight in weights[i][j]) //Variable
+                    for(int weightIndex = 0; weightIndex < Layers[layerIndex].Neurons[neuronIndex].Weights.Length; weightIndex++)
                     {
-                        weights[i][j][weightIndex] += LearningRate;
+                        //Get error for positive change of the weight
+                        weights[layerIndex][neuronIndex][weightIndex] += LearningRate;
                         ModifyWeights(weights);
                         double error = GetError(inputs, expectedOutputs);
 
-                        weights[i][j][weightIndex] -= 2 * LearningRate;
+                        //Get error for negative change of the weight
+                        weights[layerIndex][neuronIndex][weightIndex] -= 2 * LearningRate;
                         ModifyWeights(weights);
                         double error2 = GetError(inputs, expectedOutputs);
 
-                        var gradient = (error - error2) / (2 * LearningRate);
+                        //Calculate gradient of the error
+                        var errorGradient = (error - error2) / (2 * LearningRate);
 
-                        weights[i][j][weightIndex] += LearningRate - LearningRate * gradient;
+                        //Apply gradient descent to minimize error
+                        weights[layerIndex][neuronIndex][weightIndex] += LearningRate - LearningRate * errorGradient;
                         ModifyWeights(weights);
-                        weightIndex++;
                     }
                 }
             }

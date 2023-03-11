@@ -2,6 +2,8 @@
 {
     public static class MathTools
     {
+        public static readonly Random Random = new Random();
+
         #region Activation functions
 
         public static double Sigmoid(double x)

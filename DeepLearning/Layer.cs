@@ -2,7 +2,7 @@
 {
     public class Layer
     {
-        private Neuron[] Neurons { get; set; }
+        public Neuron[] Neurons { get; set; }
 
         public double Bias { get; set; }
 
@@ -28,12 +28,12 @@
 
         public void ComputeNeurons(Layer inputLayer)
         {
-            double[] inputValues = new double[inputLayer.Neurons.Length + 1];
-            for (int i = 0; i < inputLayer.Neurons.Length; i++)
+            if (inputLayer.Neurons.Length + 1 != Neurons[0].Weights.Length)
             {
-                inputValues[i] = inputLayer.Neurons[i].Output;
+                throw new ArgumentException("The number of neurons in the input layer does not match the number of weights for each neuron in this layer.");
             }
-            inputValues[inputLayer.Neurons.Length] = inputLayer.Bias;
+
+            double[] inputValues = inputLayer.Neurons.Select(neuron => neuron.Output).Concat(new[] { inputLayer.Bias }).ToArray();
 
             foreach (Neuron neuron in Neurons)
             {
@@ -43,26 +43,21 @@
 
         public double[] GetOutputs()
         {
-            double[] values = new double[Neurons.Length];
-            for (int i = 0; i < Neurons.Length; i++)
-            {
-                values[i] = Neurons[i].Output;
-            }
-            return values;
+            return Neurons.Select(neuron => neuron.Output).ToArray();
         }
 
         public double[][] GetWeights()
         {
-            double[][] values = new double[Neurons.Length][];
-            for (int i = 0; i < Neurons.Length; i++)
-            {
-                values[i] = Neurons[i].Weights;
-            }
-            return values;
+            return Neurons.Select(neuron => neuron.Weights).ToArray();
         }
 
         public void ModifyWeights(double[][] weights)
         {
+            if (weights.Length != Neurons.Length)
+            {
+                throw new ArgumentException("The number of weight arrays does not match the number of neurons in this layer.");
+            }
+
             for (int i = 0; i < weights.Length; i++)
             {
                 Neurons[i].Weights = weights[i];
