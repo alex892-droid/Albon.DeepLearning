@@ -10,8 +10,8 @@
 
         public Neuron(int numberOfInputs, Func<double, double> activationFunction)
         {
-            Weights = new double[numberOfInputs + 1]; //+1 for Bias
-            for (int weightIndex = 0; weightIndex <= numberOfInputs; weightIndex++)
+            Weights = new double[numberOfInputs];
+            for (int weightIndex = 0; weightIndex < numberOfInputs; weightIndex++)
             {
                 Weights[weightIndex] = MathTools.Random.NextDouble();
             }
@@ -26,7 +26,7 @@
 
         public void ComputeOutput(double[] values)
         {
-            if (values.Length != Weights.Length - 1)
+            if (values.Length != Weights.Length)
             {
                 throw new ArgumentException("The number of input values does not match the number of weights.");
             }

@@ -1,4 +1,6 @@
-﻿namespace DeepLearning
+﻿using System.Xml.Schema;
+
+namespace DeepLearning
 {
     public class NeuralNetwork
     {
@@ -7,8 +9,6 @@
         private Layer InputLayer { get; set; }
 
         private Layer[] Layers { get; set; }
-
-        private int NumberOfNeuronsPerLayer { get; set; }
 
         private double[][] TrainingDataset { get; set; }
 
@@ -29,10 +29,15 @@
             double learningRate
             )
         {
+            if(trainingDataset.Length < 100)
+            {
+                throw new ArgumentException("Not enough data to train a neural network.");
+            }
+
             Layers = new Layer[numberOfHiddenLayers + 1];
 
             //Initialization first hidden layer from number of inputs
-            Layers[0] = new Layer(numberOfNeuronsPerLayer, trainingDataset[0].Length, activationFunctionNeurons);
+            Layers[0] = new Layer(numberOfNeuronsPerLayer, trainingDataset[0].Length + NUMBER_OF_BIASES_PER_LAYER, activationFunctionNeurons);
 
             for (int i = 1; i < numberOfHiddenLayers; i++)
             {
@@ -42,7 +47,6 @@
             //Initialization output layer
             Layers[numberOfHiddenLayers] = new Layer(expectedResultsDataset[0].Length, numberOfNeuronsPerLayer + NUMBER_OF_BIASES_PER_LAYER, activationFunctionOutputs);
 
-            NumberOfNeuronsPerLayer = numberOfHiddenLayers;
             TrainingDataset = trainingDataset;
             ExpectedResultsDataset = expectedResultsDataset;
             LossFunction = lossFunction;
@@ -101,8 +105,8 @@
             var trainingDataset = TrainingDataset[0..(int)(0.8f * TrainingDataset.Length)];
             var trainingExpectedResultsDataset = ExpectedResultsDataset[0..(int)(0.8f * ExpectedResultsDataset.Length)];
 
-            var testDataset = TrainingDataset[0..(int)(0.2f * TrainingDataset.Length)];
-            var testExpectedResultsDataset = ExpectedResultsDataset[0..(int)(0.2f * ExpectedResultsDataset.Length)];
+            var testDataset = TrainingDataset[(int)(0.8f * TrainingDataset.Length)..TrainingDataset.Length];
+            var testExpectedResultsDataset = ExpectedResultsDataset[(int)(0.8f * ExpectedResultsDataset.Length)..ExpectedResultsDataset.Length];
 
             int epoch = 0;
             double lastAverageValidationLoss = double.MaxValue;
@@ -138,7 +142,7 @@
                     break;
                 }
 
-                if (averageValidationLoss == double.NaN)
+                if (double.IsNaN(averageValidationLoss))
                 {
                     Console.WriteLine($"End of training : Error too high to be calculated. Number of neurons or learning rate too high, or activation/loss function inadequate.");
                     break;

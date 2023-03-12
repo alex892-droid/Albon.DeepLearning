@@ -28,11 +28,6 @@
 
         public void ComputeNeurons(Layer inputLayer)
         {
-            if (inputLayer.Neurons.Length + 1 != Neurons[0].Weights.Length)
-            {
-                throw new ArgumentException("The number of neurons in the input layer does not match the number of weights for each neuron in this layer.");
-            }
-
             double[] inputValues = inputLayer.Neurons.Select(neuron => neuron.Output).Concat(new[] { inputLayer.Bias }).ToArray();
 
             foreach (Neuron neuron in Neurons)

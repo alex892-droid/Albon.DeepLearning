@@ -5,6 +5,8 @@ VisualStudioVersion = 17.5.33414.496
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Albon.DeepLearning", "DeepLearning\Albon.DeepLearning.csproj", "{A3EAC401-4849-4253-ADFE-741FB7177C14}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example", "ConsoleApp\Example.csproj", "{3EB92217-35CD-49D9-BD1F-C0FA829C431E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{A3EAC401-4849-4253-ADFE-741FB7177C14}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A3EAC401-4849-4253-ADFE-741FB7177C14}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A3EAC401-4849-4253-ADFE-741FB7177C14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3EB92217-35CD-49D9-BD1F-C0FA829C431E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3EB92217-35CD-49D9-BD1F-C0FA829C431E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3EB92217-35CD-49D9-BD1F-C0FA829C431E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3EB92217-35CD-49D9-BD1F-C0FA829C431E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
