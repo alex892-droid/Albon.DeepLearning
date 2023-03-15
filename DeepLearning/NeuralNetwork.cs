@@ -14,6 +14,8 @@ namespace DeepLearning
 
         private double[][] ExpectedResultsDataset { get; set; }
 
+        private double MinLearningPrecision { get; set; }
+
         private Func<double[], double[], double> LossFunction { get; set; }
 
         private double LearningRate { get; set; }
@@ -26,7 +28,8 @@ namespace DeepLearning
             Func<double, double> activationFunctionNeurons,
             Func<double, double> activationFunctionOutputs,
             Func<double[], double[], double> lossFunction,
-            double learningRate
+            double learningRate,
+            double minLearningPrecision = double.MinValue
             )
         {
             if(trainingDataset.Length < 100)
@@ -51,6 +54,7 @@ namespace DeepLearning
             ExpectedResultsDataset = expectedResultsDataset;
             LossFunction = lossFunction;
             LearningRate = learningRate;
+            MinLearningPrecision = minLearningPrecision;
         }
 
         public double Test(double[] inputs, double[] expectedOutputs)
@@ -130,7 +134,7 @@ namespace DeepLearning
 
                 Console.WriteLine($"Epoch {epoch++}: train loss: {averageTrainingLoss} | validation loss : {averageValidationLoss}");
 
-                if(lastAverageValidationLoss < averageValidationLoss)
+                if (lastAverageValidationLoss < averageValidationLoss)
                 {
                     Console.WriteLine($"End of training : overfitting threshold reached.");
                     return averageValidationLoss;
@@ -142,9 +146,9 @@ namespace DeepLearning
                     return averageValidationLoss;
                 }
 
-                if (double.IsNaN(averageValidationLoss))
+                if (lastAverageValidationLoss - averageValidationLoss < MinLearningPrecision)
                 {
-                    Console.WriteLine($"End of training : Error too high to be calculated. Number of neurons or learning rate too high, or activation/loss function inadequate.");
+                    Console.WriteLine($"End of training : learning inferior to minimal learning.");
                     return averageValidationLoss;
                 }
 
