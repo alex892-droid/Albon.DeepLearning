@@ -39,10 +39,12 @@
         public static double BinaryCrossEntropyLoss(double[] predictedOutput, double[] expectedOutput)
         {
             double loss = 0.0;
-
+            double epsilon = 1e-15;
             for (int i = 0; i < expectedOutput.Length; i++)
             {
-                loss += expectedOutput[i] * Math.Log(predictedOutput[i]) - (1 - expectedOutput[i]) * Math.Log(1 - predictedOutput[i]);
+                double p = Math.Max(predictedOutput[i], epsilon);
+                double q = Math.Max(1 - predictedOutput[i], epsilon);
+                loss += expectedOutput[i] * Math.Log(p) - (1 - expectedOutput[i]) * Math.Log(q);
             }
 
             return loss / expectedOutput.Length;
