@@ -44,7 +44,7 @@
             {
                 double p = Math.Max(predictedOutput[i], epsilon);
                 double q = Math.Max(1 - predictedOutput[i], epsilon);
-                loss += expectedOutput[i] * Math.Log(p) - (1 - expectedOutput[i]) * Math.Log(q);
+                loss += expectedOutput[i] * Math.Log(p) + (1 - expectedOutput[i]) * Math.Log(q);
             }
 
             return -loss / expectedOutput.Length;
