@@ -100,7 +100,7 @@ namespace DeepLearning
             return GetError(inputs, expectedOutputs);
         }
 
-        public void Train()
+        public double Train()
         {
             var trainingDataset = TrainingDataset[0..(int)(0.8f * TrainingDataset.Length)];
             var trainingExpectedResultsDataset = ExpectedResultsDataset[0..(int)(0.8f * ExpectedResultsDataset.Length)];
@@ -133,19 +133,19 @@ namespace DeepLearning
                 if(lastAverageValidationLoss < averageValidationLoss)
                 {
                     Console.WriteLine($"End of training : overfitting threshold reached.");
-                    break;
+                    return averageValidationLoss;
                 }
 
                 if (lastAverageValidationLoss == averageValidationLoss)
                 {
                     Console.WriteLine($"End of training : learning ineffective. Increase number of neurons/layers or increase learning rate.");
-                    break;
+                    return averageValidationLoss;
                 }
 
                 if (double.IsNaN(averageValidationLoss))
                 {
                     Console.WriteLine($"End of training : Error too high to be calculated. Number of neurons or learning rate too high, or activation/loss function inadequate.");
-                    break;
+                    return averageValidationLoss;
                 }
 
                 lastAverageValidationLoss = averageValidationLoss;
