@@ -36,17 +36,17 @@
             return mse;
         }
 
-        public static double BinaryCrossEntropyLoss(double[] y_true, double[] y_pred)
+        public static double BinaryCrossEntropyLoss(double[] predictedOutput, double[] expectedOutput)
         {
             double epsilon = 1e-15; // a small constant to avoid taking the logarithm of zero or one
             double loss = 0.0;
 
-            for (int i = 0; i < y_true.Length; i++)
+            for (int i = 0; i < expectedOutput.Length; i++)
             {
-                loss += y_true[i] * Math.Log(y_pred[i] + epsilon) - (1 - y_true[i]) * Math.Log(1 - y_pred[i] + epsilon);
+                loss += expectedOutput[i] * Math.Log(predictedOutput[i] + epsilon) - (1 - expectedOutput[i]) * Math.Log(1 - predictedOutput[i] + epsilon);
             }
 
-            return loss / y_true.Length;
+            return loss / expectedOutput.Length;
         }
 
         #endregion
