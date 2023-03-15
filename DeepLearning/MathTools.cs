@@ -47,7 +47,7 @@
                 loss += expectedOutput[i] * Math.Log(p) - (1 - expectedOutput[i]) * Math.Log(q);
             }
 
-            return loss / expectedOutput.Length;
+            return -loss / expectedOutput.Length;
         }
 
         #endregion
