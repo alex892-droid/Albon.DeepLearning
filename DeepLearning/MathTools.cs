@@ -43,10 +43,7 @@
 
             for (int i = 0; i < y_true.Length; i++)
             {
-                // Add a small constant to y_pred to avoid taking the logarithm of zero or one
-                double y_pred_smoothed = Math.Max(Math.Min(y_pred[i], 1.0 - epsilon), epsilon);
-
-                loss += -y_true[i] * Math.Log(y_pred_smoothed) - (1 - y_true[i]) * Math.Log(1 - y_pred_smoothed);
+                loss += y_true[i] * Math.Log(y_pred[i] + epsilon) - (1 - y_true[i]) * Math.Log(1 - y_pred[i] + epsilon);
             }
 
             return loss / y_true.Length;
