@@ -1,6 +1,6 @@
 ﻿namespace DeepLearning
 {
-    public class Layer
+    internal class Layer
     {
         public Neuron[] Neurons { get; set; }
 
