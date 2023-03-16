@@ -29,4 +29,4 @@ neuralNetwork.Train();
 
 
 var result = neuralNetwork.Predict(new double[4] { 1, 2, 3, 4 });
-Console.WriteLine($"{result.GetOutputs()[0]} : {(5 * 1 + 2 * 2 + 1.5 * 3 + 4 + 5)}");
+Console.WriteLine($"{result[0]} : {(5 * 1 + 2 * 2 + 1.5 * 3 + 4 + 5)}");
