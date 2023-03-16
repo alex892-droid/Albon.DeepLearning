@@ -1,4 +1,5 @@
-﻿using DeepLearning;
+﻿using Albon.DeepLearning.Math;
+using DeepLearning;
 
 double[][] dataset = new double[1000][];
 double[][] datasetResults = new double[1000][];
@@ -18,9 +19,9 @@ NeuralNetwork neuralNetwork = new NeuralNetwork(
     datasetResults,
     2,
     9,
-    MathTools.ReLU,
-    MathTools.ReLU,
-    MathTools.MeanSquaredError,
+    new ReLU(),
+    new ReLU(),
+    new MeanSquaredError(),
     0.0001,
     0.01);
 

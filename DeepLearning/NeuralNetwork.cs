@@ -1,4 +1,5 @@
-﻿using System.Xml.Schema;
+﻿using Albon.DeepLearning.Math;
+using System.Xml.Schema;
 
 namespace DeepLearning
 {
@@ -25,9 +26,9 @@ namespace DeepLearning
             double[][] expectedResultsDataset,
             int numberOfHiddenLayers,
             int numberOfNeuronsPerLayer,
-            Func<double, double> activationFunctionNeurons,
-            Func<double, double> activationFunctionOutputs,
-            Func<double[], double[], double> lossFunction,
+            IActivationFunction activationFunctionNeurons,
+            IActivationFunction activationFunctionOutputs,
+            ILossFunction lossFunction,
             double learningRate,
             double minLearningPrecision = double.MinValue
             )
@@ -40,19 +41,19 @@ namespace DeepLearning
             Layers = new Layer[numberOfHiddenLayers + 1];
 
             //Initialization first hidden layer from number of inputs
-            Layers[0] = new Layer(numberOfNeuronsPerLayer, trainingDataset[0].Length + NUMBER_OF_BIASES_PER_LAYER, activationFunctionNeurons);
+            Layers[0] = new Layer(numberOfNeuronsPerLayer, trainingDataset[0].Length + NUMBER_OF_BIASES_PER_LAYER, activationFunctionNeurons.ActivationFunction);
 
             for (int i = 1; i < numberOfHiddenLayers; i++)
             {
-                Layers[i] = new Layer(numberOfNeuronsPerLayer, numberOfNeuronsPerLayer + NUMBER_OF_BIASES_PER_LAYER, activationFunctionNeurons);
+                Layers[i] = new Layer(numberOfNeuronsPerLayer, numberOfNeuronsPerLayer + NUMBER_OF_BIASES_PER_LAYER, activationFunctionNeurons.ActivationFunction);
             }
 
             //Initialization output layer
-            Layers[numberOfHiddenLayers] = new Layer(expectedResultsDataset[0].Length, numberOfNeuronsPerLayer + NUMBER_OF_BIASES_PER_LAYER, activationFunctionOutputs);
+            Layers[numberOfHiddenLayers] = new Layer(expectedResultsDataset[0].Length, numberOfNeuronsPerLayer + NUMBER_OF_BIASES_PER_LAYER, activationFunctionOutputs.ActivationFunction);
 
             TrainingDataset = trainingDataset;
             ExpectedResultsDataset = expectedResultsDataset;
-            LossFunction = lossFunction;
+            LossFunction = lossFunction.LossFunction;
             LearningRate = learningRate;
             MinLearningPrecision = minLearningPrecision;
         }
