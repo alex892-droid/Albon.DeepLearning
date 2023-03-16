@@ -4,7 +4,7 @@ namespace DeepLearning
 {
     public class NeuralNetwork
     {
-        public const int NUMBER_OF_BIASES_PER_LAYER = 1;
+        private const int NUMBER_OF_BIASES_PER_LAYER = 1;
 
         private Layer InputLayer { get; set; }
 
@@ -57,12 +57,9 @@ namespace DeepLearning
             MinLearningPrecision = minLearningPrecision;
         }
 
-        public double Test(double[] inputs, double[] expectedOutputs)
-        {
-            return GetError(inputs, expectedOutputs);
-        }
+        #region Public Methods
 
-        public Layer Predict(double[] inputs)
+        public double[] Predict(double[] inputs)
         {
             InputLayer = new Layer(inputs);
             Layers[0].ComputeNeurons(InputLayer);
@@ -70,38 +67,7 @@ namespace DeepLearning
             {
                 Layers[i].ComputeNeurons(Layers[i - 1]);
             }
-            return Layers[^1];
-        }
-
-        public double TrainOnData(double[] inputs, double[] expectedOutputs)
-        {
-            double[][][] weights = GetWeights();
-            for (int layerIndex = 0; layerIndex < Layers.Length; layerIndex++)
-            {
-                for (int neuronIndex = 0; neuronIndex < Layers[layerIndex].Neurons.Length; neuronIndex++)
-                {
-                    for(int weightIndex = 0; weightIndex < Layers[layerIndex].Neurons[neuronIndex].Weights.Length; weightIndex++)
-                    {
-                        //Get error for positive change of the weight
-                        weights[layerIndex][neuronIndex][weightIndex] += LearningRate;
-                        ModifyWeights(weights);
-                        double error = GetError(inputs, expectedOutputs);
-
-                        //Get error for negative change of the weight
-                        weights[layerIndex][neuronIndex][weightIndex] -= 2 * LearningRate;
-                        ModifyWeights(weights);
-                        double error2 = GetError(inputs, expectedOutputs);
-
-                        //Calculate gradient of the error
-                        var errorGradient = (error - error2) / (2 * LearningRate);
-
-                        //Apply gradient descent to minimize error
-                        weights[layerIndex][neuronIndex][weightIndex] += LearningRate - LearningRate * errorGradient;
-                        ModifyWeights(weights);
-                    }
-                }
-            }
-            return GetError(inputs, expectedOutputs);
+            return Layers[^1].GetOutputs();
         }
 
         public double Train()
@@ -128,7 +94,7 @@ namespace DeepLearning
                 double averageValidationLoss = 0;
                 foreach (var data in testDataset)
                 {
-                    averageValidationLoss += Test(data, testExpectedResultsDataset[l++]);
+                    averageValidationLoss += GetError(data, testExpectedResultsDataset[l++]);
                 }
                 averageValidationLoss /= testExpectedResultsDataset.Length;
 
@@ -156,7 +122,11 @@ namespace DeepLearning
             }
         }
 
-        public double GetError(double[] inputs, double[] expectedOutputs)
+        #endregion
+
+        #region Private Methods
+
+        private double GetError(double[] inputs, double[] expectedOutputs)
         {
             InputLayer = new Layer(inputs);
             Layers[0].ComputeNeurons(InputLayer);
@@ -167,7 +137,7 @@ namespace DeepLearning
             return LossFunction(Layers.Last().GetOutputs(), expectedOutputs);
         }
 
-        public double[][][] GetWeights()
+        private double[][][] GetWeights()
         {
             double[][][] weights = new double[Layers.Length][][];
             for (int i = 0; i < Layers.Length; i++)
@@ -177,12 +147,45 @@ namespace DeepLearning
             return weights;
         }
 
-        public void ModifyWeights(double[][][] weights)
+        private void ModifyWeights(double[][][] weights)
         {
             for (int i = 0; i < Layers.Length; i++)
             {
                 Layers[i].ModifyWeights(weights[i]);
             }
         }
+
+        private double TrainOnData(double[] inputs, double[] expectedOutputs)
+        {
+            double[][][] weights = GetWeights();
+            for (int layerIndex = 0; layerIndex < Layers.Length; layerIndex++)
+            {
+                for (int neuronIndex = 0; neuronIndex < Layers[layerIndex].Neurons.Length; neuronIndex++)
+                {
+                    for (int weightIndex = 0; weightIndex < Layers[layerIndex].Neurons[neuronIndex].Weights.Length; weightIndex++)
+                    {
+                        //Get error for positive change of the weight
+                        weights[layerIndex][neuronIndex][weightIndex] += LearningRate;
+                        ModifyWeights(weights);
+                        double error = GetError(inputs, expectedOutputs);
+
+                        //Get error for negative change of the weight
+                        weights[layerIndex][neuronIndex][weightIndex] -= 2 * LearningRate;
+                        ModifyWeights(weights);
+                        double error2 = GetError(inputs, expectedOutputs);
+
+                        //Calculate gradient of the error
+                        var errorGradient = (error - error2) / (2 * LearningRate);
+
+                        //Apply gradient descent to minimize error
+                        weights[layerIndex][neuronIndex][weightIndex] += LearningRate - LearningRate * errorGradient;
+                        ModifyWeights(weights);
+                    }
+                }
+            }
+            return GetError(inputs, expectedOutputs);
+        }
+
+        #endregion
     }
 }
