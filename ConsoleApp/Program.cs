@@ -1,5 +1,5 @@
-﻿using Albon.DeepLearning.Math;
-using DeepLearning;
+﻿using Albon.DeepLearning;
+using Albon.DeepLearning.Math;
 
 double[][] dataset = new double[1000][];
 double[][] datasetResults = new double[1000][];
@@ -14,7 +14,7 @@ for (int i = 0; i < 1000; i++)
     datasetResults[i] = new double[1] { 5 * variables[0] + 2 * variables[1] + 1.5 * variables[2] + variables[3] + 5 };
 }
 
-FeedForwardNeuralNetwork neuralNetwork = new FeedForwardNeuralNetwork(
+NeuralNetwork neuralNetwork = new NeuralNetwork(
     dataset,
     datasetResults,
     2,
@@ -23,7 +23,7 @@ FeedForwardNeuralNetwork neuralNetwork = new FeedForwardNeuralNetwork(
     new ReLU(),
     new MeanSquaredError(),
     0.0001,
-    0.01);
+    0.0001);
 
 
 neuralNetwork.Train();

@@ -1,9 +1,8 @@
 ﻿using Albon.DeepLearning.Math;
-using System.Xml.Schema;
 
-namespace DeepLearning
+namespace Albon.DeepLearning
 {
-    public class FeedForwardNeuralNetwork
+    public class NeuralNetwork
     {
         private const int NUMBER_OF_BIASES_PER_LAYER = 1;
 
@@ -21,7 +20,7 @@ namespace DeepLearning
 
         private double LearningRate { get; set; }
 
-        public FeedForwardNeuralNetwork(
+        public NeuralNetwork(
             double[][] trainingDataset,
             double[][] expectedResultsDataset,
             int numberOfHiddenLayers,
@@ -53,7 +52,7 @@ namespace DeepLearning
 
             TrainingDataset = trainingDataset;
             ExpectedResultsDataset = expectedResultsDataset;
-            LossFunction = lossFunction.LossFunction;
+            LossFunction = lossFunction.EvaluateError;
             LearningRate = learningRate;
             MinLearningPrecision = minLearningPrecision;
         }

@@ -1,6 +1,6 @@
-﻿namespace DeepLearning
+﻿namespace Albon.DeepLearning
 {
-    internal class Layer
+    internal class Layer : ILayer
     {
         public Neuron[] Neurons { get; set; }
 

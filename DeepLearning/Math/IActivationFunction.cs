@@ -8,6 +8,6 @@ namespace Albon.DeepLearning.Math
 {
     public interface IActivationFunction
     {
-        public Func<double, double> ActivationFunction { get; }
+        public double ActivationFunction(double input);
     }
 }

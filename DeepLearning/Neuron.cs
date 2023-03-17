@@ -1,6 +1,6 @@
-﻿namespace DeepLearning
+﻿namespace Albon.DeepLearning
 {
-    internal class Neuron
+    internal class Neuron : INeuron
     {
         public double[] Weights { get; set; }
 

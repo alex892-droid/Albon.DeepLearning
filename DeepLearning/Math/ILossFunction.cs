@@ -8,6 +8,6 @@ namespace Albon.DeepLearning.Math
 {
     public interface ILossFunction
     {
-        public Func<double[], double[], double> LossFunction { get; }
+        public double EvaluateError(double[] predictedOutputs, double[] expectedOutputs);
     }
 }

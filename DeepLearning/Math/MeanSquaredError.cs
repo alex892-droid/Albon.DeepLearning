@@ -1,14 +1,16 @@
-﻿using DeepLearning;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Albon.DeepLearning.Math
+﻿namespace Albon.DeepLearning.Math
 {
     public class MeanSquaredError : ILossFunction
     {
-        public Func<double[], double[], double> LossFunction => MathTools.MeanSquaredError;
+        public double EvaluateError(double[] predictedOutputs, double[] expectedOutputs)
+        {
+            double mse = 0;
+            for (int i = 0; i < predictedOutputs.Length; i++)
+            {
+                mse += System.Math.Pow(expectedOutputs[i] - predictedOutputs[i], 2);
+            }
+            mse /= predictedOutputs.Length;
+            return mse;
+        }
     }
 }
