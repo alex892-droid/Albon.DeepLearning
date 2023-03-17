@@ -14,7 +14,7 @@ for (int i = 0; i < 1000; i++)
     datasetResults[i] = new double[1] { 5 * variables[0] + 2 * variables[1] + 1.5 * variables[2] + variables[3] + 5 };
 }
 
-NeuralNetwork neuralNetwork = new NeuralNetwork(
+FeedForwardNeuralNetwork neuralNetwork = new FeedForwardNeuralNetwork(
     dataset,
     datasetResults,
     2,

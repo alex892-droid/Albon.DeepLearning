@@ -3,7 +3,7 @@ using System.Xml.Schema;
 
 namespace DeepLearning
 {
-    public class NeuralNetwork
+    public class FeedForwardNeuralNetwork
     {
         private const int NUMBER_OF_BIASES_PER_LAYER = 1;
 
@@ -21,7 +21,7 @@ namespace DeepLearning
 
         private double LearningRate { get; set; }
 
-        public NeuralNetwork(
+        public FeedForwardNeuralNetwork(
             double[][] trainingDataset,
             double[][] expectedResultsDataset,
             int numberOfHiddenLayers,
