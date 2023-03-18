@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Albon.DeepLearning.Math
+namespace Albon.DeepLearning.LossFunction
 {
     public interface ILossFunction
     {

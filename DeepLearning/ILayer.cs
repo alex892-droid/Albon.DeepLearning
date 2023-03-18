@@ -2,6 +2,8 @@
 {
     internal interface ILayer
     {
+        public void GenerateNeurons(int numberOfNeurons, int numberOfInputs);
+
         public void ComputeNeurons(Layer inputLayer);
 
         public double[] GetOutputs();

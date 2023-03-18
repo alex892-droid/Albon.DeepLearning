@@ -1,4 +1,4 @@
-﻿namespace Albon.DeepLearning.Math
+﻿namespace Albon.DeepLearning.ActivationFunction
 {
     public class Sigmoid : IActivationFunction
     {

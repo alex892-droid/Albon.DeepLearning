@@ -1,4 +1,4 @@
-﻿namespace Albon.DeepLearning.Math
+﻿namespace Albon.DeepLearning.LossFunction
 {
     public class BinaryCrossEntropyLoss : ILossFunction
     {

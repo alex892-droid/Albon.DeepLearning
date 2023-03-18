@@ -1,11 +1,12 @@
-﻿using Albon.DeepLearning.Math;
+﻿using Albon.DeepLearning.ActivationFunction;
+using Albon.DeepLearning.Generator;
+using Albon.DeepLearning.LossFunction;
+using Albon.DeepLearning.Math;
 
 namespace Albon.DeepLearning
 {
     public class NeuralNetwork
     {
-        private const int NUMBER_OF_BIASES_PER_LAYER = 1;
-
         private Layer InputLayer { get; set; }
 
         private Layer[] Layers { get; set; }
@@ -16,48 +17,36 @@ namespace Albon.DeepLearning
 
         private double MinLearningPrecision { get; set; }
 
-        private Func<double[], double[], double> LossFunction { get; set; }
+        private ILossFunction LossFunction { get; set; }
 
-        private double LearningRate { get; set; }
+        private IOptimizer Optimizer { get; set; }
 
         public NeuralNetwork(
             double[][] trainingDataset,
             double[][] expectedResultsDataset,
             int numberOfHiddenLayers,
             int numberOfNeuronsPerLayer,
-            IActivationFunction activationFunctionNeurons,
-            IActivationFunction activationFunctionOutputs,
+            ILayerGenerator layerGenerator,
             ILossFunction lossFunction,
-            double learningRate,
+            IOptimizer optimizer,
             double minLearningPrecision = double.MinValue
             )
         {
-            if(trainingDataset.Length < 100)
+            if (trainingDataset.Length < 100)
             {
                 throw new ArgumentException("Not enough data to train a neural network.");
             }
 
             Layers = new Layer[numberOfHiddenLayers + 1];
 
-            //Initialization first hidden layer from number of inputs
-            Layers[0] = new Layer(numberOfNeuronsPerLayer, trainingDataset[0].Length + NUMBER_OF_BIASES_PER_LAYER, activationFunctionNeurons.ActivationFunction);
-
-            for (int i = 1; i < numberOfHiddenLayers; i++)
-            {
-                Layers[i] = new Layer(numberOfNeuronsPerLayer, numberOfNeuronsPerLayer + NUMBER_OF_BIASES_PER_LAYER, activationFunctionNeurons.ActivationFunction);
-            }
-
-            //Initialization output layer
-            Layers[numberOfHiddenLayers] = new Layer(expectedResultsDataset[0].Length, numberOfNeuronsPerLayer + NUMBER_OF_BIASES_PER_LAYER, activationFunctionOutputs.ActivationFunction);
+            Layers = layerGenerator.GenerateLayers(trainingDataset[0].Length, numberOfNeuronsPerLayer, numberOfHiddenLayers, expectedResultsDataset[0].Length);
 
             TrainingDataset = trainingDataset;
             ExpectedResultsDataset = expectedResultsDataset;
-            LossFunction = lossFunction.EvaluateError;
-            LearningRate = learningRate;
+            LossFunction = lossFunction;
             MinLearningPrecision = minLearningPrecision;
+            Optimizer = optimizer;
         }
-
-        #region Public Methods
 
         public double[] Predict(double[] inputs)
         {
@@ -86,7 +75,7 @@ namespace Albon.DeepLearning
                 int k = 0;
                 foreach (var data in trainingDataset)
                 {
-                    averageTrainingLoss += TrainOnData(data, trainingExpectedResultsDataset[k++]);
+                    averageTrainingLoss += Optimizer.Optimize(data, trainingExpectedResultsDataset[k++], this);
                 }
                 averageTrainingLoss /= trainingDataset.Length;
 
@@ -122,11 +111,7 @@ namespace Albon.DeepLearning
             }
         }
 
-        #endregion
-
-        #region Private Methods
-
-        private double GetError(double[] inputs, double[] expectedOutputs)
+        public double GetError(double[] inputs, double[] expectedOutputs)
         {
             InputLayer = new Layer(inputs);
             Layers[0].ComputeNeurons(InputLayer);
@@ -134,10 +119,10 @@ namespace Albon.DeepLearning
             {
                 Layers[i].ComputeNeurons(Layers[i - 1]);
             }
-            return LossFunction(Layers.Last().GetOutputs(), expectedOutputs);
+            return LossFunction.EvaluateError(Layers.Last().GetOutputs(), expectedOutputs);
         }
 
-        private double[][][] GetWeights()
+        public double[][][] GetWeights()
         {
             double[][][] weights = new double[Layers.Length][][];
             for (int i = 0; i < Layers.Length; i++)
@@ -147,45 +132,12 @@ namespace Albon.DeepLearning
             return weights;
         }
 
-        private void ModifyWeights(double[][][] weights)
+        public void ModifyWeights(double[][][] weights)
         {
             for (int i = 0; i < Layers.Length; i++)
             {
                 Layers[i].ModifyWeights(weights[i]);
             }
         }
-
-        private double TrainOnData(double[] inputs, double[] expectedOutputs)
-        {
-            double[][][] weights = GetWeights();
-            for (int layerIndex = 0; layerIndex < Layers.Length; layerIndex++)
-            {
-                for (int neuronIndex = 0; neuronIndex < Layers[layerIndex].Neurons.Length; neuronIndex++)
-                {
-                    for (int weightIndex = 0; weightIndex < Layers[layerIndex].Neurons[neuronIndex].Weights.Length; weightIndex++)
-                    {
-                        //Get error for positive change of the weight
-                        weights[layerIndex][neuronIndex][weightIndex] += LearningRate;
-                        ModifyWeights(weights);
-                        double error = GetError(inputs, expectedOutputs);
-
-                        //Get error for negative change of the weight
-                        weights[layerIndex][neuronIndex][weightIndex] -= 2 * LearningRate;
-                        ModifyWeights(weights);
-                        double error2 = GetError(inputs, expectedOutputs);
-
-                        //Calculate gradient of the error
-                        var errorGradient = (error - error2) / (2 * LearningRate);
-
-                        //Apply gradient descent to minimize error
-                        weights[layerIndex][neuronIndex][weightIndex] += LearningRate - LearningRate * errorGradient;
-                        ModifyWeights(weights);
-                    }
-                }
-            }
-            return GetError(inputs, expectedOutputs);
-        }
-
-        #endregion
     }
 }

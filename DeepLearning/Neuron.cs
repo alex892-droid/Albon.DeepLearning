@@ -1,4 +1,6 @@
-﻿namespace Albon.DeepLearning
+﻿using Albon.DeepLearning.ActivationFunction;
+
+namespace Albon.DeepLearning
 {
     internal class Neuron : INeuron
     {
@@ -6,22 +8,25 @@
 
         public double Output { get; set; }
 
-        private Func<double, double> ActivationFunction { get; set; }
+        private IActivationFunction ActivationFunction { get; set; }
 
-        public Neuron(int numberOfInputs, Func<double, double> activationFunction)
+        public Neuron(IActivationFunction activationFunction)
         {
-            Weights = new double[numberOfInputs];
-            for (int weightIndex = 0; weightIndex < numberOfInputs; weightIndex++)
-            {
-                Weights[weightIndex] = MathTools.Random.NextDouble();
-            }
-
             ActivationFunction = activationFunction;
         }
 
         public Neuron(double output)
         {
             Output = output;
+        }
+
+        public void InitializeWeights(int numberOfInputs)
+        {
+            Weights = new double[numberOfInputs];
+            for (int weightIndex = 0; weightIndex < numberOfInputs; weightIndex++)
+            {
+                Weights[weightIndex] = MathTools.Random.NextDouble();
+            }
         }
 
         public void ComputeOutput(double[] values)
@@ -32,7 +37,7 @@
             }
 
             double sum = Weights.Zip(values, (weight, value) => weight * value).Sum();
-            Output = ActivationFunction(sum);
+            Output = ActivationFunction.ActivationFunction(sum);
         }
     }
 }

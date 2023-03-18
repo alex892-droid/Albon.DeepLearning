@@ -1,4 +1,7 @@
 ﻿using Albon.DeepLearning;
+using Albon.DeepLearning.ActivationFunction;
+using Albon.DeepLearning.Generator;
+using Albon.DeepLearning.LossFunction;
 using Albon.DeepLearning.Math;
 
 double[][] dataset = new double[1000][];
@@ -19,10 +22,13 @@ NeuralNetwork neuralNetwork = new NeuralNetwork(
     datasetResults,
     2,
     9,
-    new ReLU(),
-    new ReLU(),
+    new LayerGenerator
+    (
+        new NeuronGenerator(new ReLU()), 
+        new NeuronGenerator(new ReLU())
+    ),
     new MeanSquaredError(),
-    0.0001,
+    new GradientDescentOptimizer(0.00001),
     0.0001);
 
 

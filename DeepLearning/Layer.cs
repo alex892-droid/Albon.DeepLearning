@@ -1,19 +1,19 @@
-﻿namespace Albon.DeepLearning
+﻿using Albon.DeepLearning.ActivationFunction;
+using Albon.DeepLearning.Generator;
+
+namespace Albon.DeepLearning
 {
     internal class Layer : ILayer
     {
         public Neuron[] Neurons { get; set; }
 
+        public INeuronGenerator NeuronGenerator { get; set; }
+
         public double Bias { get; set; }
 
-        public Layer(int numberOfNeurons, int numberOfInputs, Func<double, double> activationFunction)
+        public Layer(INeuronGenerator neuronGenerator)
         {
-            Neurons = new Neuron[numberOfNeurons];
-            for (int i = 0; i < numberOfNeurons; i++)
-            {
-                Neurons[i] = new Neuron(numberOfInputs, activationFunction);
-            }
-
+            NeuronGenerator = neuronGenerator;
             Bias = 1;
         }
 
@@ -23,6 +23,15 @@
             for (int i = 0; i < outputs.Length; i++)
             {
                 Neurons[i] = new Neuron(outputs[i]);
+            }
+        }
+
+        public void GenerateNeurons(int numberOfNeurons, int numberOfInputs)
+        {
+            Neurons = new Neuron[numberOfNeurons];
+            for (int i = 0; i < numberOfNeurons; i++)
+            {
+                (Neurons[i] = NeuronGenerator.GenerateNeuron()).InitializeWeights(numberOfInputs);
             }
         }
 

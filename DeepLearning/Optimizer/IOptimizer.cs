@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Albon.DeepLearning.Math
 {
-    public interface IActivationFunction
+    public interface IOptimizer
     {
-        public double ActivationFunction(double input);
+        public double Optimize(double[] inputs, double[] expectedOutputs, NeuralNetwork neuralNetwork);
     }
 }
