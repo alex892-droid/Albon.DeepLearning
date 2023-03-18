@@ -11,10 +11,6 @@ namespace Albon.DeepLearning
 
         private Layer[] Layers { get; set; }
 
-        private double[][] TrainingDataset { get; set; }
-
-        private double[][] ExpectedResultsDataset { get; set; }
-
         private double MinLearningPrecision { get; set; }
 
         private ILossFunction LossFunction { get; set; }
@@ -22,8 +18,8 @@ namespace Albon.DeepLearning
         private IOptimizer Optimizer { get; set; }
 
         public NeuralNetwork(
-            double[][] trainingDataset,
-            double[][] expectedResultsDataset,
+            int numberOfInputs,
+            int numberOfOutputs,
             int numberOfHiddenLayers,
             int numberOfNeuronsPerLayer,
             ILayerGenerator layerGenerator,
@@ -32,17 +28,10 @@ namespace Albon.DeepLearning
             double minLearningPrecision = double.MinValue
             )
         {
-            if (trainingDataset.Length < 100)
-            {
-                throw new ArgumentException("Not enough data to train a neural network.");
-            }
-
             Layers = new Layer[numberOfHiddenLayers + 1];
 
-            Layers = layerGenerator.GenerateLayers(trainingDataset[0].Length, numberOfNeuronsPerLayer, numberOfHiddenLayers, expectedResultsDataset[0].Length);
+            Layers = layerGenerator.GenerateLayers(numberOfInputs, numberOfNeuronsPerLayer, numberOfHiddenLayers, numberOfOutputs);
 
-            TrainingDataset = trainingDataset;
-            ExpectedResultsDataset = expectedResultsDataset;
             LossFunction = lossFunction;
             MinLearningPrecision = minLearningPrecision;
             Optimizer = optimizer;
@@ -59,13 +48,18 @@ namespace Albon.DeepLearning
             return Layers[^1].GetOutputs();
         }
 
-        public double Train()
+        public double Train(double[][] trainDataset, double[][] expectedResultsDataset)
         {
-            var trainingDataset = TrainingDataset[0..(int)(0.8f * TrainingDataset.Length)];
-            var trainingExpectedResultsDataset = ExpectedResultsDataset[0..(int)(0.8f * ExpectedResultsDataset.Length)];
+            if (trainDataset.Length < 100)
+            {
+                throw new ArgumentException("Not enough data to train a neural network.");
+            }
 
-            var testDataset = TrainingDataset[(int)(0.8f * TrainingDataset.Length)..TrainingDataset.Length];
-            var testExpectedResultsDataset = ExpectedResultsDataset[(int)(0.8f * ExpectedResultsDataset.Length)..ExpectedResultsDataset.Length];
+            var trainingDataset = trainDataset[0..(int)(0.8f * trainDataset.Length)];
+            var trainingExpectedResultsDataset = expectedResultsDataset[0..(int)(0.8f * expectedResultsDataset.Length)];
+
+            var testDataset = trainDataset[(int)(0.8f * trainDataset.Length)..trainDataset.Length];
+            var testExpectedResultsDataset = expectedResultsDataset[(int)(0.8f * expectedResultsDataset.Length)..expectedResultsDataset.Length];
 
             int epoch = 0;
             double lastAverageValidationLoss = double.MaxValue;

@@ -18,8 +18,8 @@ for (int i = 0; i < 1000; i++)
 }
 
 NeuralNetwork neuralNetwork = new NeuralNetwork(
-    dataset,
-    datasetResults,
+    dataset[0].Length,
+    datasetResults[0].Length,
     2,
     9,
     new LayerGenerator
@@ -32,7 +32,7 @@ NeuralNetwork neuralNetwork = new NeuralNetwork(
     0.0001);
 
 
-neuralNetwork.Train();
+neuralNetwork.Train(dataset, datasetResults);
 
 
 var result = neuralNetwork.Predict(new double[4] { 1, 2, 3, 4 });
