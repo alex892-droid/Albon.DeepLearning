@@ -1,5 +1,6 @@
-# DeepLearning
+# Deep Learning in C#
 
+[To write again]
 This project has been made to make implementation of neural network in C# easy. 
 
 Here's the step to implement a neural network (at the time only feed-forward neural network) with this library :
