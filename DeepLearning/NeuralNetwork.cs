@@ -66,7 +66,6 @@ namespace Albon.DeepLearning
                 int k = 0;
                 foreach (var data in trainingDataset)
                 {
-                    //averageTrainingLoss += Optimizer.Optimize(data, trainingExpectedResultsDataset[k++], this);
                     double[][][] newWeights = Optimizer.Optimize(GetWeights(), (weights) => GetError(weights, data, trainingExpectedResultsDataset[k]));
                     averageTrainingLoss += GetError(newWeights, data, trainingExpectedResultsDataset[k++]);
                 }
