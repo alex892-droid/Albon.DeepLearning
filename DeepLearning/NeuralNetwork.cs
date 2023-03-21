@@ -66,7 +66,9 @@ namespace Albon.DeepLearning
                 int k = 0;
                 foreach (var data in trainingDataset)
                 {
-                    averageTrainingLoss += Optimizer.Optimize(data, trainingExpectedResultsDataset[k++], this);
+                    //averageTrainingLoss += Optimizer.Optimize(data, trainingExpectedResultsDataset[k++], this);
+                    double[][][] newWeights = Optimizer.Optimize(GetWeights(), (weights) => GetError(weights, data, trainingExpectedResultsDataset[k]));
+                    averageTrainingLoss += GetError(newWeights, data, trainingExpectedResultsDataset[k++]);
                 }
                 averageTrainingLoss /= trainingDataset.Length;
 
@@ -104,6 +106,18 @@ namespace Albon.DeepLearning
 
         public double GetError(double[] inputs, double[] expectedOutputs)
         {
+            InputLayer = new Layer(inputs);
+            Layers[0].ComputeNeurons(InputLayer);
+            for (int i = 1; i < Layers.Length; i++)
+            {
+                Layers[i].ComputeNeurons(Layers[i - 1]);
+            }
+            return LossFunction.EvaluateError(Layers.Last().GetOutputs(), expectedOutputs);
+        }
+
+        public double GetError(double[][][] weights, double[] inputs, double[] expectedOutputs)
+        {
+            ModifyWeights(weights);
             InputLayer = new Layer(inputs);
             Layers[0].ComputeNeurons(InputLayer);
             for (int i = 1; i < Layers.Length; i++)

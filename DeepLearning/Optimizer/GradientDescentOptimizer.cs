@@ -15,35 +15,31 @@ namespace Albon.DeepLearning.Math
             LearningRate = learningRate;
         }
 
-        public double Optimize(double[] inputs, double[] expectedOutputs, NeuralNetwork neuralNetwork)
+        public double[][][] Optimize(double[][][] parameters, Func<double[][][], double> computeErrorMethod)
         {
-            double[][][] weights = neuralNetwork.GetWeights();
-            for (int layerIndex = 0; layerIndex < weights.Length; layerIndex++)
+            for (int layerIndex = 0; layerIndex < parameters.Length; layerIndex++)
             {
-                for (int neuronIndex = 0; neuronIndex < weights[layerIndex].Length; neuronIndex++)
+                for (int neuronIndex = 0; neuronIndex < parameters[layerIndex].Length; neuronIndex++)
                 {
-                    for (int weightIndex = 0; weightIndex < weights[layerIndex][neuronIndex].Length; weightIndex++)
+                    for (int weightIndex = 0; weightIndex < parameters[layerIndex][neuronIndex].Length; weightIndex++)
                     {
                         //Get error for positive change of the weight
-                        weights[layerIndex][neuronIndex][weightIndex] += LearningRate;
-                        neuralNetwork.ModifyWeights(weights);
-                        double error = neuralNetwork.GetError(inputs, expectedOutputs);
+                        parameters[layerIndex][neuronIndex][weightIndex] += LearningRate;
+                        double error = computeErrorMethod(parameters);
 
                         //Get error for negative change of the weight
-                        weights[layerIndex][neuronIndex][weightIndex] -= 2 * LearningRate;
-                        neuralNetwork.ModifyWeights(weights);
-                        double error2 = neuralNetwork.GetError(inputs, expectedOutputs);
+                        parameters[layerIndex][neuronIndex][weightIndex] -= 2 * LearningRate;
+                        double error2 = computeErrorMethod(parameters);
 
                         //Calculate gradient of the error
                         var errorGradient = (error - error2) / (2 * LearningRate);
 
                         //Apply gradient descent to minimize error
-                        weights[layerIndex][neuronIndex][weightIndex] += LearningRate - LearningRate * errorGradient;
-                        neuralNetwork.ModifyWeights(weights);
+                        parameters[layerIndex][neuronIndex][weightIndex] += LearningRate - LearningRate * errorGradient;
                     }
                 }
             }
-            return neuralNetwork.GetError(inputs, expectedOutputs);
+            return parameters;
         }
     }
 }

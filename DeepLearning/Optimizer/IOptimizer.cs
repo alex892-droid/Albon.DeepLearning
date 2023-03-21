@@ -8,6 +8,6 @@ namespace Albon.DeepLearning.Math
 {
     public interface IOptimizer
     {
-        public double Optimize(double[] inputs, double[] expectedOutputs, NeuralNetwork neuralNetwork);
+        public double[][][] Optimize(double[][][] parameters, Func<double[][][], double> computeErrorMethod);
     }
 }
