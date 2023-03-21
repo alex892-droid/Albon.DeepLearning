@@ -9,6 +9,6 @@ namespace Albon.DeepLearning.Generator
 {
     public interface ILayerGenerator
     {
-        internal Layer[] GenerateLayers(int numberOfInputs, int numberOfNeuronsPerLayer, int numberOfHiddenLayers, int numberOfResults);
+        internal Layer[] GenerateLayers(int numberOfInputs, int numberOfOutputs);
     }
 }

@@ -18,14 +18,12 @@ for (int i = 0; i < 1000; i++)
 }
 
 NeuralNetwork neuralNetwork = new NeuralNetwork(
-    dataset[0].Length,
-    datasetResults[0].Length,
-    2,
-    9,
     new LayerGenerator
     (
         new NeuronGenerator(new ReLU()), 
-        new NeuronGenerator(new ReLU())
+        new NeuronGenerator(new ReLU()),
+        9,
+        2
     ),
     new MeanSquaredError(),
     new GradientDescentOptimizer(0.00001),

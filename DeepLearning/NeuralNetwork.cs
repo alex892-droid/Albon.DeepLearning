@@ -13,25 +13,20 @@ namespace Albon.DeepLearning
 
         private double MinLearningPrecision { get; set; }
 
+        private ILayerGenerator LayerGenerator { get; set; }
+
         private ILossFunction LossFunction { get; set; }
 
         private IOptimizer Optimizer { get; set; }
 
         public NeuralNetwork(
-            int numberOfInputs,
-            int numberOfOutputs,
-            int numberOfHiddenLayers,
-            int numberOfNeuronsPerLayer,
             ILayerGenerator layerGenerator,
             ILossFunction lossFunction,
             IOptimizer optimizer,
             double minLearningPrecision = double.MinValue
             )
         {
-            Layers = new Layer[numberOfHiddenLayers + 1];
-
-            Layers = layerGenerator.GenerateLayers(numberOfInputs, numberOfNeuronsPerLayer, numberOfHiddenLayers, numberOfOutputs);
-
+            LayerGenerator = layerGenerator;
             LossFunction = lossFunction;
             MinLearningPrecision = minLearningPrecision;
             Optimizer = optimizer;
@@ -50,6 +45,8 @@ namespace Albon.DeepLearning
 
         public double Train(double[][] trainDataset, double[][] expectedResultsDataset)
         {
+            Layers = LayerGenerator.GenerateLayers(trainDataset[0].Length, expectedResultsDataset[0].Length);
+
             if (trainDataset.Length < 100)
             {
                 throw new ArgumentException("Not enough data to train a neural network.");
